@@ -1,22 +1,21 @@
 """Command-line interface for the RAG system."""
 
-import asyncio
 import sys
 from pathlib import Path
 
-from rag_pipeline import RAGPipeline
+from api_client import RAGAPIClient, ServerNotReachableError, ServerError, APIClientError
 
 
 class RAGCLI:
     """Command-line interface for RAG question answering."""
 
-    def __init__(self):
-        """Initialize the CLI."""
-        self.pipeline = RAGPipeline(
-            ollama_model="llama3.2:3b",
-            max_context_length=4000,
-            max_search_results=3
-        )
+    def __init__(self, api_url=None):
+        """Initialize the CLI.
+
+        Args:
+            api_url: Optional API URL. If None, uses environment variable or default.
+        """
+        self.api_client = RAGAPIClient(base_url=api_url)
 
     def print_banner(self):
         """Print welcome banner."""
@@ -49,9 +48,30 @@ class RAGCLI:
 
         print("─" * 70)
 
-    async def run(self):
+    def run(self):
         """Run the interactive CLI."""
         self.print_banner()
+
+        # Check server health on startup
+        try:
+            print("Checking server connection...")
+            health = self.api_client.check_health()
+            if health.status == "healthy":
+                print("✓ Connected to server")
+            else:
+                print(f"⚠ Server status: {health.status}")
+                if health.message:
+                    print(f"  {health.message}")
+            print()
+        except ServerNotReachableError as e:
+            print(f"\n❌ Error: {e}")
+            print("\nPlease start the server first:")
+            print("  nix run .#server")
+            print("\nOr set AISHE_API_URL to point to a running server.")
+            sys.exit(1)
+        except Exception as e:
+            print(f"\n⚠ Warning: Could not check server health: {e}")
+            print("Continuing anyway...\n")
 
         while True:
             try:
@@ -69,7 +89,7 @@ class RAGCLI:
 
                 # Process question
                 print("\nSearching Wikipedia and generating answer...")
-                result = await self.pipeline.answer_question(question)
+                result = self.api_client.ask_question(question)
 
                 # Display result
                 self.print_result(result)
@@ -77,8 +97,16 @@ class RAGCLI:
             except KeyboardInterrupt:
                 print("\n\nGoodbye!")
                 break
+            except ServerNotReachableError as e:
+                print(f"\n❌ Server Error: {e}")
+                print("\nThe server may have stopped. Please restart it:")
+                print("  nix run .#server")
+            except ServerError as e:
+                print(f"\n❌ Server Error: {e}")
+            except APIClientError as e:
+                print(f"\n❌ Error: {e}")
             except Exception as e:
-                print(f"\nError: {e}")
+                print(f"\nUnexpected error: {e}")
                 import traceback
                 traceback.print_exc()
 
@@ -86,7 +114,7 @@ class RAGCLI:
 def main():
     """Entry point for the CLI."""
     cli = RAGCLI()
-    asyncio.run(cli.run())
+    cli.run()
 
 
 if __name__ == "__main__":

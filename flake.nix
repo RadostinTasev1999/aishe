@@ -8,14 +8,59 @@
 
   outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system:
-      let pkgs = nixpkgs.legacyPackages.${system};
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+
+        # Create a Python environment with dependencies
+        pythonEnv = pkgs.python311.withPackages (ps:
+          with ps; [
+            fastapi
+            mcp
+            ollama
+            pip
+            virtualenv
+            # Native Nix packages from requirements.txt
+            platformdirs
+            # Note: mcp, wikipedia-mcp, ollama, fastapi, uvicorn, httpx are not available in nixpkgs
+            # These will be installed via pip in the shellHook
+          ]);
       in {
+        apps.aishe = {
+          type = "app";
+          program = "${pkgs.writeShellScript "aishe" ''
+            # Ensure we're in the project directory
+            cd ${self}
+
+            # Activate virtual environment if it exists
+            if [ -d .venv ]; then
+              source .venv/bin/activate
+            fi
+
+            # Run the CLI
+            exec ${pythonEnv}/bin/python src/cli.py "$@"
+          ''}";
+        };
+
+        apps.server = {
+          type = "app";
+          program = "${pkgs.writeShellScript "aishe-server" ''
+            # Ensure we're in the project directory
+            cd ${self}
+
+            # Activate virtual environment if it exists
+            if [ -d .venv ]; then
+              source .venv/bin/activate
+            fi
+
+            # Run the server
+            exec ${pythonEnv}/bin/python src/server.py "$@"
+          ''}";
+        };
+
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
-            # Python environment
-            python311
-            python311Packages.pip
-            python311Packages.virtualenv
+            # Python environment with native Nix packages
+            pythonEnv
 
             # Ollama for local LLM
             ollama
@@ -32,22 +77,27 @@
             fi
             source .venv/bin/activate
 
-            # Install/update Python dependencies from requirements.txt
+            # Install remaining Python dependencies not available in nixpkgs
+            # (mcp, wikipedia-mcp, ollama client, fastapi, uvicorn, httpx)
             if [ -f requirements.txt ]; then
-              echo "Installing Python dependencies from requirements.txt..."
-              pip install -q -r requirements.txt
+              echo "Installing additional Python dependencies from requirements.txt..."
+              pip install -q mcp wikipedia-mcp ollama fastapi 'uvicorn[standard]' httpx
             fi
 
-            echo "=================================="
-            echo "RAG Development Environment Loaded"
-            echo "=================================="
+            echo "========================================"
+            echo "AISHE Development Environment Loaded"
+            echo "========================================"
             echo "Python: $(python --version)"
             echo "Ollama: $(ollama --version)"
             echo "Virtual environment: .venv"
             echo ""
+            echo "Available commands:"
+            echo "  nix run .#server  - Start the API server"
+            echo "  nix run .#aishe   - Run the CLI client"
+            echo ""
             echo "To start Ollama service, run:"
             echo "  ollama serve"
-            echo "=================================="
+            echo "========================================"
           '';
         };
       });

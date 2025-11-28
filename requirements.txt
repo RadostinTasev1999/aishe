@@ -5,6 +5,13 @@ wikipedia-mcp>=1.6.0
 # Ollama client
 ollama>=0.6.0
 
+# FastAPI and server dependencies
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+
+# HTTP client
+httpx>=0.25.0
+
 # Additional dependencies
 platformdirs>=4.0.0
 
