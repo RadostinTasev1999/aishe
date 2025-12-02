@@ -9,7 +9,7 @@
   "scripts": {
     "build": "tsc",
     "test": "vitest",
-    "start": "node dist/src/index.js"
+    "start": "node dist/src/main.js"
   },
   "keywords": [],
   "author": "",

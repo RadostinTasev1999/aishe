@@ -21,3 +21,6 @@ export {
 
 // Configuration display function
 export { displayConfig } from "./config.js";
+
+// Command-line interface
+export { RAGCLI } from "./cli.js";
