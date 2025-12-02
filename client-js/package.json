@@ -1,13 +1,14 @@
 {
   "name": "aishe-client",
   "version": "1.0.0",
-  "description": "",
+  "description": "AIshe JavaScript/TypeScript client",
   "main": "dist/src/index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run build:link",
+    "build:link": "npm link",
     "test": "vitest",
     "start": "node dist/src/main.js"
   },

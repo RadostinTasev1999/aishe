@@ -7,10 +7,10 @@
  * Example usage:
  * 
  * ```ts
- * import { RAGCLI } from "aishe-client";
+ * import { AIsheCLI } from "aishe-client";
  * 
  * const apiUrl = process.env.AISHE_API_URL;
- * const cli = new RAGCLI(apiUrl);
+ * const cli = new AIsheCLI(apiUrl);
  * await cli.run();
  * ```
  * 
@@ -27,7 +27,7 @@ import type { AnswerResponse, HealthResponse } from "./models.js";
 /**
  * Command-line interface for RAG question answering.
  */
-export class RAGCLI {
+export class AIsheCLI {
   private apiClient: RAGAPIClient;
   private rl = readline.createInterface({ input, output });
 

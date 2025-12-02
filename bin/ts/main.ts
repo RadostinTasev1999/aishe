@@ -1,4 +1,4 @@
-import { AIsheCLI } from "./cli.js";
+import { AIsheCLI } from "aishe-client";
 
 /**
  * Entry point for the CLI.
@@ -10,7 +10,7 @@ async function main(): Promise<void> {
 }
 
 // Run only when executed directly
-if (process.argv[1] && import.meta.url.endsWith(process.argv[1])) {
+if (import.meta.url.endsWith(process.argv[1])) {
     main().catch((err) => {
         console.error("Fatal error:", err);
         process.exit(1);

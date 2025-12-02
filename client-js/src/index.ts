@@ -23,4 +23,4 @@ export {
 export { displayConfig } from "./config.js";
 
 // Command-line interface
-export { RAGCLI } from "./cli.js";
+export { AIsheCLI } from "./cli.js";
