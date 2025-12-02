@@ -1,8 +1,23 @@
-import { displayConfig } from "./config.js";
+// Public API surface for the AIshe JavaScript/TypeScript client.
 
+// Main client
+export { RAGAPIClient } from "./client.js";
 
-export const helloWorld = "JavaScript Client";
+// Types (interfaces)
+export type {
+  AnswerResponse,
+  HealthResponse,
+  ErrorResponse,
+  Source,
+  QuestionRequest,
+} from "./models.js";
 
-console.log("Typescript: hello", helloWorld);
+// Error classes
+export {
+  APIClientError,
+  ServerError,
+  ServerNotReachableError,
+} from "./errors.js";
 
-displayConfig();
+// Configuration display function
+export { displayConfig } from "./config.js";
