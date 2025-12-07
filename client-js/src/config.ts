@@ -16,7 +16,7 @@ export const AISHE_API_URL: string = process.env.AISHE_API_URL || `http://${SERV
 /**
  * Request timeout in seconds
  */
-export const REQUEST_TIMEOUT_MS: number = (parseInt(process.env.REQUEST_TIMEOUT || "120")) * 1000;
+export const REQUEST_TIMEOUT_MS: number = parseInt(process.env.REQUEST_TIMEOUT || "120") * 1000;
 
 /**
  * Display the current configuration

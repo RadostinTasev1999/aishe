@@ -2,7 +2,6 @@
  * Base exception for API client errors
  */
 export class APIClientError extends Error {
-
     /**
      * Constructor for APIClientError
      * @param message - The error message
@@ -18,7 +17,6 @@ export class APIClientError extends Error {
  * Exception raised when the server is not reachable
  */
 export class ServerNotReachableError extends APIClientError {
-
     /**
      * Constructor for ServerNotReachableError
      * @param message - The error message
@@ -34,7 +32,6 @@ export class ServerNotReachableError extends APIClientError {
  * Exception raised when the server returns an error
  */
 export class ServerError extends APIClientError {
-
     /**
      * Constructor for ServerError
      * @param message - The error message

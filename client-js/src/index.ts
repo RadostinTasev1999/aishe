@@ -4,20 +4,10 @@
 export { RAGAPIClient } from "./client.js";
 
 // Types (interfaces)
-export type {
-  AnswerResponse,
-  HealthResponse,
-  ErrorResponse,
-  Source,
-  QuestionRequest,
-} from "./models.js";
+export type { AnswerResponse, HealthResponse, ErrorResponse, Source, QuestionRequest } from "./models.js";
 
 // Error classes
-export {
-  APIClientError,
-  ServerError,
-  ServerNotReachableError,
-} from "./errors.js";
+export { APIClientError, ServerError, ServerNotReachableError } from "./errors.js";
 
 // Configuration display function
 export { displayConfig } from "./config.js";
