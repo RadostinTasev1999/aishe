@@ -65,9 +65,8 @@ service:
   # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
   port: 8000
   targetPort: 8000
-  # Annotations for the service
-  annotations:
-    cloud.google.com/load-balancer-type: "External"
+  # Annotations for the service (empty for standard LoadBalancer)
+  annotations: {}
 
 # Restrict LoadBalancer access to specific IP ranges (optional)
 # Note: You may need to patch this after helm install/upgrade
