@@ -19,6 +19,7 @@
         "typescript": "^5.9.3"
     },
     "dependencies": {
-        "aishe-client": "file:../../../deps/aishe-js"
+        "aishe-client": "file:../../../deps/aishe-js",
+        "dotenv": "^17.2.3"
     }
 }
