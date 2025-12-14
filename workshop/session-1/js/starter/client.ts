@@ -23,7 +23,17 @@ export class AIsheHTTPClient {
     constructor(baseUrl?: string, timeout?: number) {
         // TODO: implement this function
         // 1. if baseURL is not provided, use default AISHE_API_URL from 'aishe-client'
+        /*
+        Here we create instance properties:
+        */
+       // ! this- keyword refers to the object that the method is attached to
+       this.baseUrl = baseUrl ?? AISHE_API_URL
+       // ! The ?? operator returns the right operand when the left operand is nullish (null or undefined), otherwise it returns the left operand.
+
         // 2. if timeout is not provided, use default REQUEST_TIMEOUT_MS from 'aishe-client'
+
+        this.timeout = timeout ?? REQUEST_TIMEOUT_MS
+
         throw new Error("AIsheHTTPClient.constructor: Not implemented");
     }
 
@@ -56,6 +66,7 @@ export class AIsheHTTPClient {
     async checkHealth(): Promise<HealthResponse> {
         // TODO: implement this function
         // 1. Build the health endpoint: baseURL + "/health"
+         
         // 2. Make a GET request using aisheAPIRequest()
         //    NOTE: aisheAPIRequest() will handle the HTTP request, timeout, error handling for you.
         // 3. Decode JSON response into HealthResponse
