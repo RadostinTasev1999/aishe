@@ -8,12 +8,13 @@ import { AIsheHTTPClient } from "./client.js";
 async function main(): Promise<void> {
     // TODO: create a new AIsheHTTPClient instance
     // ..............................
-
+    const httpClient = new AIsheHTTPClient()
+    console.log('aishe http client instance is:', httpClient)
     console.log("Checking AIshe's health...");
     // TODO: check AIshe's health
     // Hint: you'll need to use the 'await' operator with async functions.
     // ..............................
-
+    
     // TODO: print the health status
     // Hint: you need to print `status`, `ollama_accessible`, and `message` if it exists.
     const status = "NOT_IMPLEMENTED";
