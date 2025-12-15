@@ -14,12 +14,13 @@ async function main(): Promise<void> {
     // TODO: check AIshe's health
     // Hint: you'll need to use the 'await' operator with async functions.
     // ..............................
-    
+        const health = await httpClient.checkHealth()
     // TODO: print the health status
     // Hint: you need to print `status`, `ollama_accessible`, and `message` if it exists.
-    const status = "NOT_IMPLEMENTED";
-    const ollamaAccessible = "NOT_IMPLEMENTED";
-    const message = "NOT_IMPLEMENTED";
+    console.log(`status: ${health.status}, ollama_accessible: ${health.ollama_accessible}, message: ${health.message}`)
+    const status = health.status
+    const ollamaAccessible = health.ollama_accessible
+    const message = health.message
 
     console.log("======================================================================");
     console.log("AIshe server status:", status);
@@ -59,14 +60,22 @@ async function main(): Promise<void> {
         // Hint: performance measures in milliseconds, so you need to convert it to seconds
 
         // TODO: remove this hardcoded AnswerResponse
-        let answer: AnswerResponse = {
-            answer: "NOT_IMPLEMENTED",
-            sources: [],
-            processing_time: 0.0,
-        };
+        let answer: AnswerResponse 
+        
+        // = {
+        //     answer: "NOT_IMPLEMENTED",
+        //     sources: [],
+        //     processing_time: 0.0,
+        // };
 
         const startTime = performance.now();
         // TODO: ask AIshe a question, handle errors, measure execution time
+        try {
+            answer = await httpClient.askQuestion(question)
+        } catch (error) {
+            console.error('Error:', error)
+            continue;
+        }
         const endTime = performance.now();
 
         // Asking: Does France have a capital?
@@ -94,9 +103,9 @@ async function main(): Promise<void> {
         // ======================================================================
 
         // TODO: set these values based on the answer response
-        const source = "NOT_IMPLEMENTED";
-        const processingTime = 0.0;
-        const measuredTime = 0.0;
+        const source = "AIshe API"
+        const processingTime = answer.processing_time
+        const measuredTime = (endTime - startTime) / 1000;
 
         console.log(`Asking: ${question}`);
         console.log("\n");
@@ -125,9 +134,10 @@ async function main(): Promise<void> {
 }
 
 // Run only when executed directly
-if (process.argv[1] && import.meta.url.endsWith(process.argv[1])) {
-    main().catch((err) => {
+// if (process.argv[1] && import.meta.url.endsWith(process.argv[1])) {
+    
+// }
+main().catch((err) => {
         console.error("Fatal error:", err);
         process.exit(1);
     });
-}
