@@ -66,14 +66,19 @@ export class AIsheHTTPClient {
     async checkHealth(): Promise<HealthResponse> {
         // TODO: implement this function
         // 1. Build the health endpoint: baseURL + "/health"
-         
+         const healthEndpoint = `${this.baseUrl}/health`
         // 2. Make a GET request using aisheAPIRequest()
         //    NOTE: aisheAPIRequest() will handle the HTTP request, timeout, error handling for you.
+            const response = await aisheAPIRequest('GET',healthEndpoint,this.timeout)
         // 3. Decode JSON response into HealthResponse
+            const healthResponse = await response as HealthResponse
         // 4. Check the response status code (should be "healthy");
         //    if not, throw APIClientError with an appropriate error message
+             if (healthResponse.statusCode !== 200) {
+                    throw new APIClientError('Health check failed')
+             }
         // 5. Return the health response
-        //
+              return healthResponse;
         // NOTE: aisheAPIRequest() method signature:
         //    async aisheAPIRequest(method: "GET" | "POST", endpoint: string, timeout?, body?): Promise<unknown>
         //
