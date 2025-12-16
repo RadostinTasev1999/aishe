@@ -69,9 +69,11 @@ export class AIsheHTTPClient {
          const healthEndpoint = `${this.baseUrl}/health`
         // 2. Make a GET request using aisheAPIRequest()
         //    NOTE: aisheAPIRequest() will handle the HTTP request, timeout, error handling for you.
-            const response = await aisheAPIRequest('GET',healthEndpoint,this.timeout)
+         const response = await aisheAPIRequest('GET',healthEndpoint,this.timeout)
         // 3. Decode JSON response into HealthResponse
-            const healthResponse = await response as HealthResponse
+         const healthResponse = await response as HealthResponse
+         // ! 'as' - used for type assertion which allows us to manually set the data type
+         // ! of a variable and prevent the compiler from inferring it on its own.
         // 4. Check the response status code (should be "healthy");
         //    if not, throw APIClientError with an appropriate error message
              if (healthResponse.statusCode !== 200) {
@@ -116,12 +118,18 @@ export class AIsheHTTPClient {
     async askQuestion(question: string): Promise<AnswerResponse> {
         // TODO: implement this function
         // 1. Check if the question is empty; if so, throw Error with an appropriate error message
+            if (question === "") {
+                throw new Error('Please provide with a question')
+            }
         // 2. Build the ask endpoint: baseURL + "/api/v1/ask"
+        const endpoint = `${this.baseUrl}/api/v1/ask`
         // 3. Make a POST request using aisheAPIRequest()
         //    NOTE: aisheAPIRequest() will handle the HTTP request, timeout, error handling for you.
+              const response = await aisheAPIRequest('POST',endpoint,this.timeout,{question})
         // 4. Decode JSON response into AnswerResponse
+              const  answer = await response as AnswerResponse
         // 5. Return the answer response
-        //
+              return answer
         // NOTE: aisheAPIRequest() method signature:
         //    async aisheAPIRequest(method: "GET" | "POST", endpoint: string, timeout?, body?): Promise<unknown>
         //
