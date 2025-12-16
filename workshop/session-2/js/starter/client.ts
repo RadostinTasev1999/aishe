@@ -36,9 +36,11 @@ export class AIsheHTTPClient {
     private constructor(redisClient: RedisClientType, baseUrl?: string, timeout?: number) {
         // TODO: implement this function
         // 1. if baseURL is not provided, use default AISHE_API_URL from 'aishe-client'
+          this.baseUrl = baseUrl ?? AISHE_API_URL
         // 2. if timeout is not provided, use default REQUEST_TIMEOUT_MS from 'aishe-client'
+          this.timeout = timeout ?? REQUEST_TIMEOUT_MS
         // [NEW] 3. assign redisClient to property this.redisClient
-
+          this.redisClient = redisClient
         throw new Error("AIsheHTTPClient.constructor: Not implemented");
     }
 
@@ -54,10 +56,28 @@ export class AIsheHTTPClient {
         // TODO: implement this function
         // [NEW] 1. create a Redis client using createClient()
         //       NOTE: use default values from 'aishe-client' for Redis configuration parameters
+                 const redisClient: RedisClientType = createClient({
+                    socket: {
+                        host: redisHost ?? REDIS_HOST,
+                        port: redisPort ?? REDIS_PORT
+                    },
+                    username: redisUsername ?? REDIS_USERNAME,
+                    password: redisPassword ?? REDIS_PASSWORD,
+                    database: redisDatabase ?? REDIS_DATABASE
+                 })
+                 redisClient.on("error",(err) => console.error(err))
         // [NEW] 2. connect to Redis
+                 await redisClient.connect()
         // [NEW] 3. add a basic healthcheck by pinging Redis
         //       NOTE: if Redis is not reachable, throw ServerNotReachableError
-        throw new Error("AIsheHTTPClient.create: Not implemented");
+                 const health = await redisClient.ping();
+                 if (!health) {
+                    throw new ServerNotReachableError("Redis is not reachable.Hint: check your Redis configuration.")
+                 }
+                
+                 return new AIsheHTTPClient(redisClient, baseUrl,timeout)
+
+        //throw new Error("AIsheHTTPClient.create: Not implemented");
     }
 
     /**
@@ -66,6 +86,7 @@ export class AIsheHTTPClient {
     async close(): Promise<void> {
         // TODO: implement this function
         // [NEW] 1. quit the Redis client
+        await this.redisClient.quit()
         throw new Error("AIsheHTTPClient.close: Not implemented");
     }
 
@@ -90,13 +111,19 @@ export class AIsheHTTPClient {
     async checkHealth(): Promise<HealthResponse> {
         // TODO: implement this function
         // 1. Build the health endpoint: baseURL + "/health"
+        const healthEndpoint = `${this.baseUrl}/health`
         // 2. Make a GET request using aisheAPIRequest()
         //    NOTE: aisheAPIRequest() will handle the HTTP request, timeout, error handling for you.
+        const fetchClient = await aisheAPIRequest('GET',healthEndpoint)
         // 3. Decode JSON response into HealthResponse
+        const response = await fetchClient as HealthResponse
         // 4. Check the response status code (should be "healthy");
         //    if not, throw APIClientError with an appropriate error message
+        if (response.statusCode !== 200) {
+            throw new APIClientError('Error fetching server')
+        }
         // 5. Return the health response
-        //
+            return response
         // NOTE: Use your implementation from session 1 OR
         //       reference implementation in `session1-basic/solution/client.ts`
         throw new Error("AIsheHTTPClient.checkHealth: Not implemented");
