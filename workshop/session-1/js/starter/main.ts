@@ -14,7 +14,7 @@ async function main(): Promise<void> {
     // TODO: check AIshe's health
     // Hint: you'll need to use the 'await' operator with async functions.
     // ..............................
-        const health = await httpClient.checkHealth()
+        const health = await httpClient.checkHealth() // returns response from server
     // TODO: print the health status
     // Hint: you need to print `status`, `ollama_accessible`, and `message` if it exists.
     console.log(`status: ${health.status}, ollama_accessible: ${health.ollama_accessible}, message: ${health.message}`)
@@ -68,7 +68,7 @@ async function main(): Promise<void> {
         //     processing_time: 0.0,
         // };
 
-        const startTime = performance.now();
+        const startTime = performance.now(); // method returns a high resolution timestamp in milliseconds
         // TODO: ask AIshe a question, handle errors, measure execution time
         try {
             answer = await httpClient.askQuestion(question)
@@ -103,7 +103,7 @@ async function main(): Promise<void> {
         // ======================================================================
 
         // TODO: set these values based on the answer response
-        const source = "AIshe API"
+        const source = answer.sources
         const processingTime = answer.processing_time
         const measuredTime = (endTime - startTime) / 1000;
 
