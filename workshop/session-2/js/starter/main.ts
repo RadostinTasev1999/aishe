@@ -7,8 +7,7 @@ import { AIsheHTTPClient } from "./client.js";
 
 async function main(): Promise<void> {
     // TODO: create a new AIsheHTTPClient instance
-    const client: AIsheHTTPClient = await AIsheHTTPClient.create();
-
+    const client = await AIsheHTTPClient.create();
     console.log("Checking AIshe's health...");
     // TODO: check AIshe's health
     // Hint: you'll need to use the 'await' operator with async functions.
