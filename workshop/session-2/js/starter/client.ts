@@ -160,17 +160,37 @@ export class AIsheHTTPClient {
     async askQuestion(question: string): Promise<AnswerResponse> {
         // TODO: implement this function
         // 1. Check if the question is empty; if so, throw Error with an appropriate error message
+            if (question === "" || !question.trim()) {
+                throw new Error('Please input a question')
+            }
         // [NEW] 2. Generate a cache key using the question
+            //! First, check if the question is cached in Redis:
+            const cacheKey = this.generateCacheKey(question)
         // [NEW] 3. Check if the question is cached in Redis
         //       - if found (cache HIT), return the cached answer
         //       - otherwise, proceed to step 4
+                const cachedAnswer = await this.redisClient.get(cacheKey)
+                if (cachedAnswer) {
+                    console.log(`INFO: Cache HIT for question: ${question}`)
+
+                    return JSON.parse(cachedAnswer) as AnswerResponse
+                }
         // 4. Build the ask endpoint: baseURL + "/api/v1/ask"
+                const askEndpoint = `${this.baseUrl}/api/v1/ask`
         // 5. Make a POST request using aisheAPIRequest()
         //    NOTE: aisheAPIRequest() will handle the HTTP request, timeout, error handling for you.
-        // [NEW] 6. Cache raw answer in Redis (as a string)
+        const body = { question: question.trim() }
+        const response = await aisheAPIRequest('POST',askEndpoint,this.timeout, body)
+        // [NEW] 6. 
+        
         // 7. Decode JSON response into AnswerResponse
+        const answerResponse = response as AnswerResponse
+        // Cache raw answer in Redis (as a string)
+        await this.redisClient.set(cacheKey, JSON.stringify(answerResponse))
+        console.log(`INFO: Cached answer for question: ${question}`)
+
         // 8. Return the answer response
-        //
+        return answerResponse
         // NOTE: You should save the raw answer in Redis as a string and use
         //       the JSON module to parse it back & forward.
         //       If you have some extra time, you can try implementing caching
@@ -178,7 +198,7 @@ export class AIsheHTTPClient {
         //
         // NOTE: Use your implementation from session 1 OR
         //       reference implementation in `session1-basic/solution/client.ts`
-        throw new Error("AIsheHTTPClient.askQuestion: Not implemented");
+        // throw new Error("AIsheHTTPClient.askQuestion: Not implemented");
     }
 
     /**
@@ -212,8 +232,11 @@ export class AIsheHTTPClient {
     private generateCacheKey(question: string): string {
         // TODO: implement this function
         // 1. Create a SHA-256 hash of the question
+        const hash = crypto.createHash("sha-256").update(question).digest("hex")
         // 2. Return the cache key with a prefix, e.g. aishe:question:<hash>
         //    Hint: you may use REDIS_CACHE_KEY_PREFIX from 'aishe-client' for the prefix
-        throw new Error("AIsheHTTPClient.generateCacheKey: Not implemented");
+            return `${REDIS_CACHE_KEY_PREFIX}:${hash}`
+
+       // throw new Error("AIsheHTTPClient.generateCacheKey: Not implemented");
     } 
 }
