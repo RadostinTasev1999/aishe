@@ -91,7 +91,7 @@ async function main(): Promise<void> {
         // ======================================================================
 
         // TODO: set these values based on the answer response
-        const source = "NOT_IMPLEMENTED";
+        const source = answer.sources
         const processingTime = answer.processing_time;
         const measuredTime = (endTime - startTime) / 1000;
 
@@ -123,9 +123,10 @@ async function main(): Promise<void> {
 }
 
 // Run only when executed directly
-if (process.argv[1] && import.meta.url.endsWith(process.argv[1])) {
-    main().catch((err) => {
+// if (process.argv[1] && import.meta.url.endsWith(process.argv[1])) {
+    
+// }
+main().catch((err) => {
         console.error("Fatal error:", err);
         process.exit(1);
     });
-}
